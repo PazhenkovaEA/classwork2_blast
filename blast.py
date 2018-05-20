@@ -29,16 +29,15 @@ if __name__ == "__main__":
         blast_records = NCBIXML.parse(result_handle)
         for blast_record in blast_records:
             if (blast_record.alignments[0].hsps[0].expect < evalue) & (len(blast_record.alignments) > 0): #Если evalue больше трешхолда и найдено хоть одно выравниание
-                element = SeqRecord(Seq(str(seq_record.seq)), id=blast_record.descriptions[0].title, description='')
+                element = SeqRecord(Seq(str(seq_record.seq)), id=blast_record.descriptions[0].title.split('|')[4], description='')
             else:
                 element = SeqRecord(Seq(str(seq_record.seq)), id=seq_record.id, description='')
         elements.append(element)
+
+    elements = [f for f in sorted(elements, key=lambda x: x.id)]
 
     output_handle = open(fileout, "w")
     for seq in elements:
         SeqIO.write(seq, output_handle, "fasta"),
     output_handle.close()
 
-
-
-filename = "sequence.fasta"
